@@ -1,0 +1,33 @@
+#!/usr/bin/env mumble-build
+# Copyright 2013-2015 The 'mumble-releng' Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that
+# can be found in the LICENSE file in the source tree or at
+# <http://mumble.info/mumble-releng/LICENSE>.
+
+urls=(
+	"http://www.zeroc.com/download/Ice/3.5/Ice-3.5.1.tar.gz"
+)
+
+digests=(
+	"sha1:"
+	"sha256:"
+)
+
+function extract {
+	tar -zxf Ice-3.5.1.tar.gz
+	cd Ice-3.5.1/cpp
+}
+
+function prepare {
+	patch -p2 < ${MUMBLE_BUILDENV_ROOT}/patches/Ice-3.5.1-static.patch
+}
+
+function build {
+	# embedded_runpath_prefix automatically appends '/lib' to the end of itself.
+	# that means that $ICE_PREFIX shouldn't be $ICE_PREFIX/lib to be correct.
+	make prefix="${MUMBLE_ICE_PREFIX}" embedded_runpath_prefix="${MUMBLE_PREFIX}/lib:${MUMBLE_ICE_PREFIX}" OPTIMIZE=yes DB_HOME="${MUMBLE_PREFIX}" MCPP_HOME="${MUMBLE_PREFIX}" BZIP2_HOME="${MUMBLE_PREFIX}" EXPAT_HOME="${MUMBLE_PREFIX}" OPENSSL_HOME="${MUMBLE_PREFIX}" STATICLIBS=yes -j4
+}
+
+function install {
+    make prefix="${MUMBLE_ICE_PREFIX}" embedded_runpath_prefix="${MUMBLE_PREFIX}/lib:${MUMBLE_ICE_PREFIX}" OPTIMIZE=yes DB_HOME="${MUMBLE_PREFIX}" MCPP_HOME="${MUMBLE_PREFIX}" BZIP2_HOME="${MUMBLE_PREFIX}" EXPAT_HOME="${MUMBLE_PREFIX}" OPENSSL_HOME="${MUMBLE_PREFIX}" STATICLIBS=yes install
+}

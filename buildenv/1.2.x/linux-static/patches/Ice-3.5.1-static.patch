@@ -1,0 +1,80 @@
+diff -rupN Ice-3.5.1-old/cpp/Makefile Ice-3.5.1-new/cpp/Makefile
+--- Ice-3.5.1-old/cpp/Makefile	2013-10-04 08:48:14.000000000 -0700
++++ Ice-3.5.1-new/cpp/Makefile	2015-06-22 09:26:35.895929441 -0700
+@@ -11,11 +11,7 @@ top_srcdir	= .
+ 
+ include $(top_srcdir)/config/Make.rules
+ 
+-SUBDIRS		= config src include test
+-
+-ifeq ($(shell uname | grep MINGW),)
+-SUBDIRS		:= $(SUBDIRS) demo
+-endif
++SUBDIRS		= config src include
+ 
+ INSTALL_SUBDIRS	= $(install_bindir) $(install_libdir) $(install_includedir) \
+ 	$(install_configdir) $(install_mandir)
+diff -rupN Ice-3.5.1-old/cpp/config/Make.rules Ice-3.5.1-new/cpp/config/Make.rules
+--- Ice-3.5.1-old/cpp/config/Make.rules	2013-10-04 08:48:15.000000000 -0700
++++ Ice-3.5.1-new/cpp/config/Make.rules	2015-06-22 09:27:51.242598817 -0700
+@@ -312,11 +312,11 @@ ifeq ($(mktest),)
+ endif
+ 
+ ifdef ice_src_dist
+-    SLICEPARSERLIB	= $(libdir)/$(call mklibfilename,Slice,$(VERSION))
++    SLICEPARSERLIB	= $(libdir)/$(call mklibname,Slice)
+     SLICE2CPP		= $(bindir)/slice2cpp
+     SLICE2FREEZE	= $(bindir)/slice2freeze
+ else
+-    SLICEPARSERLIB	= $(ice_dir)/$(libsubdir)$(cpp11suffix)/$(call mklibfilename,Slice,$(VERSION))
++    SLICEPARSERLIB	= $(ice_dir)/$(libsubdir)$(cpp11suffix)/$(call mklibname,Slice)
+     SLICE2CPP		= $(ice_dir)/$(binsubdir)$(cpp11suffix)/slice2cpp
+     SLICE2FREEZE	= $(ice_dir)/$(binsubdir)$(cpp11suffix)/slice2freeze
+ endif
+diff -rupN Ice-3.5.1-old/cpp/src/Makefile Ice-3.5.1-new/cpp/src/Makefile
+--- Ice-3.5.1-old/cpp/src/Makefile	2013-10-04 08:48:14.000000000 -0700
++++ Ice-3.5.1-new/cpp/src/Makefile	2015-06-22 09:28:50.352600949 -0700
+@@ -22,30 +22,7 @@ else
+     SUBDIRS		= IceUtil \
+ 			  Slice \
+ 			  slice2cpp \
+-			  slice2cs \
+-			  slice2freeze \
+-			  slice2freezej \
+-			  slice2java \
+-			  slice2php \
+-			  slice2py \
+-			  slice2rb \
+-			  slice2html \
+-			  Ice \
+-			  IceXML \
+-			  IceSSL \
+-			  Freeze \
+-			  FreezeScript \
+-			  IceBox \
+-			  Glacier2Lib \
+-			  Glacier2 \
+-			  IceDB \
+-			  IcePatch2Lib \
+-			  IcePatch2 \
+-			  IceStormLib \
+-			  IceGridLib \
+-			  IceStorm \
+-			  IceGrid \
+-			  ca
++			  Ice
+ endif
+ 
+ .PHONY: $(EVERYTHING) $(SUBDIRS)
+diff -rupN Ice-3.5.1-old/cpp/src/slice2cpp/Makefile Ice-3.5.1-new/cpp/src/slice2cpp/Makefile
+--- Ice-3.5.1-old/cpp/src/slice2cpp/Makefile	2013-10-04 08:48:14.000000000 -0700
++++ Ice-3.5.1-new/cpp/src/slice2cpp/Makefile	2015-06-22 09:32:11.325941517 -0700
+@@ -30,7 +30,7 @@ CPPFLAGS	:= -I. $(CPPFLAGS)
+ 
+ $(NAME): $(OBJS)
+ 	rm -f $@
+-	$(CXX) $(LDFLAGS) -o $@ $(OBJS) $(SLICE_LIBS) $(MCPP_RPATH_LINK)
++	$(CXX) $(LDFLAGS) -o $@ $(OBJS) $(SLICE_LIBS) $(MCPP_LIBS)
+ 
+ install:: all
+ 	$(call installprogram,$(NAME),$(DESTDIR)$(install_bindir))

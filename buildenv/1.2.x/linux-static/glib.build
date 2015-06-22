@@ -1,0 +1,29 @@
+#!/usr/bin/env mumble-build
+# Copyright 2013-2015 The 'mumble-releng' Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that
+# can be found in the LICENSE file in the source tree or at
+# <http://mumble.info/mumble-releng/LICENSE>.
+
+urls=(
+	"http://releng-distfiles.mumble.info/releng-distfiles/glib-2.42.2.tar.xz"
+	"http://ftp.gnome.org/pub/GNOME/sources/glib/2.42/glib-2.42.2.tar.xz"
+)
+
+digests=(
+	"sha1:87113de4096377fab1129da44f38a0da0f7f0fb4"
+	"sha256:a3cc1ebd2bd310a9fdf42ae4293ee713cdf1764bd29f552febf3bf44cadae7db"
+)
+
+function extract {
+	xzcat glib-2.42.2.tar.xz | tar -xf -
+	cd glib-2.42.2
+}
+
+function build {
+	PKG_CONFIG_LIBDIR=${MUMBLE_PREFIX}/lib/pkgconfig PYTHON=${MUMBLE_PREFIX}/bin/python ./configure --prefix=${MUMBLE_PREFIX} --enable-static
+	make
+}
+
+function install {
+	make install
+}

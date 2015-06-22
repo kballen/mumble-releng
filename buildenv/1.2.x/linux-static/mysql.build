@@ -1,0 +1,28 @@
+#!/usr/bin/env mumble-build
+# Copyright 2013-2015 The 'mumble-releng' Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that
+# can be found in the LICENSE file in the source tree or at
+# <http://mumble.info/mumble-releng/LICENSE>.
+
+urls=(
+	"http://dev.mysql.com/get/Downloads/MySQL-5.6/mysql-5.6.25.tar.gz"
+)
+
+digests=(
+	"sha1:ace53481400a4ad363ee0453a547b8ba07582fd2"
+	"sha256:15079c0b83d33a092649cbdf402c9225bcd3f33e87388407be5cdbf1432c7fbd"
+)
+
+function extract {
+	tar -zxf mysql-5.6.25.tar.gz
+	cd mysql-5.6.25
+}
+
+function build {
+	cmake -DCMAKE_PREFIX_PATH=${MUMBLE_PREFIX} -DCMAKE_INSTALL_PREFIX=${MUMBLE_PREFIX} -DINSTALL_LAYOUT=RPM -DWITH_EMBEDDED_SERVER=OFF -DWITH_SERVER=OFF -DWITH_SSL=system -DWITH_LIBEDIT=yes -DWITH_ZLIB=system -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci
+	make -j4
+}
+
+function install {
+	make install
+}

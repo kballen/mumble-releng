@@ -1,0 +1,35 @@
+#!/usr/bin/env mumble-build
+# Copyright 2013-2015 The 'mumble-releng' Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that
+# can be found in the LICENSE file in the source tree or at
+# <http://mumble.info/mumble-releng/LICENSE>.
+
+function fetch {
+	if [ -d mumble-developers-qt ]; then
+		cd mumble-developers-qt
+		git reset --hard
+		git clean -dfx
+	else
+		git clone https://github.com/mumble-voip/mumble-developers-qt.git
+		cd mumble-developers-qt
+		git fetch origin 4.8-mumble
+		git checkout 12c9cc6bfbee0f9c7f2bbd63df6ca22d9d8f4555
+	fi
+}
+
+function verify {
+	:
+}
+
+function extract {
+	:
+}
+
+function build {
+	PKG_CONFIG_LIBDIR=${MUMBLE_PREFIX}/lib/pkgconfig OPENSSL_LIBS="-L${MUMBLE_PREFIX}/lib -lssl -lcrypto" ./configure -v -fast -static -no-gui -nomake examples -nomake demos -nomake docs -release -glib -qt-sql-sqlite -qt-sql-mysql -dbus-linked -no-webkit -no-script -no-scripttools -no-phonon -no-phonon-backend -no-qt3support -no-multimedia -no-audio-backend -no-cups -system-zlib -qt-libtiff -qt-libpng -qt-libmng -qt-libjpeg -openssl-linked -I${MUMBLE_PREFIX}/include -mysql_config ${MUMBLE_PREFIX}/bin/mysql_config -prefix ${MUMBLE_QT_PREFIX} -opensource -confirm-license
+	make -j4
+}
+
+function install {
+	make install
+}
