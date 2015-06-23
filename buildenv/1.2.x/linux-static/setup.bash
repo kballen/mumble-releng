@@ -33,7 +33,10 @@ fi
 
 mkdir -p "${BUILDENV_TARGET}"
 mkdir -p "${BUILDENV_TARGET}.build"
+
 cp ./setup/env "${BUILDENV_TARGET}"
+mkdir "${BUILDENV_TARGET}/lib"
+ln -s lib "${BUILDENV_TARGET}/lib64"
 
 MUMBLE_RELENG="$(git rev-parse --show-toplevel 2>/dev/null)"
 GIT_TARGET="${BUILDENV_TARGET}/mumble-releng"

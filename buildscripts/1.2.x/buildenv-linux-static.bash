@@ -27,12 +27,12 @@ cd ${MUMBLE_PREFIX}/mumble-releng/buildenv/1.2.x/linux-static
 ./build-all.bash
 
 # Make a Tarsnap of the just-built build environment.
-BUILDENV_NAME=$(basename "${BUILDENV_DIR}")
-tarsnap -c -f "${BUILDENV_NAME}" "${BUILDENV_DIR}"
+#BUILDENV_NAME=$(basename "${BUILDENV_DIR}")
+#tarsnap -c -f "${BUILDENV_NAME}" "${BUILDENV_DIR}"
 
 # Make a Tarsnap of the build environment's .build directory.
-BUILDENV_BUILD_NAME=$(basename "${BUILDENV_BUILD_DIR}")
-tarsnap -c -f "${BUILDENV_BUILD_NAME}" "${BUILDENV_BUILD_DIR}"
+#BUILDENV_BUILD_NAME=$(basename "${BUILDENV_BUILD_DIR}")
+#tarsnap -c -f "${BUILDENV_BUILD_NAME}" "${BUILDENV_BUILD_DIR}"
 
 # Clean up the .build directory.
 ${MUMBLE_PREFIX}/mumble-releng/tools/cleanup-buildenv-build-dir.py "${BUILDENV_BUILD_DIR}"
