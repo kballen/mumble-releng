@@ -20,7 +20,7 @@ function extract {
 }
 
 function build {
-	PKG_CONFIG_LIBDIR=${MUMBLE_PREFIX}/lib/pkgconfig PYTHON=${MUMBLE_PREFIX}/bin/python ./configure --prefix=${MUMBLE_PREFIX} --enable-static
+	PYTHON=${MUMBLE_PREFIX}/bin/python ./configure --prefix=${MUMBLE_PREFIX} --enable-static
 	make
 }
 

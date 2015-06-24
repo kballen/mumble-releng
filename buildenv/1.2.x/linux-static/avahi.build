@@ -20,7 +20,7 @@ function extract {
 }
 
 function build {
-	PKG_CONFIG_LIBDIR=${MUMBLE_PREFIX}/lib/pkgconfig CFLAGS="-L${MUMBLE_PREFIX}/lib -I${MUMBLE_PREFIX}/include" ./configure --prefix=${MUMBLE_PREFIX} --enable-compat-libdns_sd --disable-qt3 --disable-qt4 --disable-gtk --disable-gtk3 --enable-dbus --with-xml=expat --disable-gdbm --disable-dbm --enable-libdaemon --disable-python --disable-python-dbus --disable-mono --disable-monodoc
+	CFLAGS="-L${MUMBLE_PREFIX}/lib -I${MUMBLE_PREFIX}/include" ./configure --prefix=${MUMBLE_PREFIX} --enable-compat-libdns_sd --disable-qt3 --disable-qt4 --disable-gtk --disable-gtk3 --enable-dbus --with-xml=expat --disable-gdbm --disable-dbm --enable-libdaemon --disable-python --disable-python-dbus --disable-mono --disable-monodoc
 	make
 }
 
