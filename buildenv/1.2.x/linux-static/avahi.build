@@ -6,7 +6,7 @@
 
 urls=(
 	"http://releng-distfiles.mumble.info/releng-distfiles/avahi-0.6.31.tar.gz"
-	"https://distfiles.macports.org/avahi/avahi-0.6.31.tar.gz"
+	"http://distfiles.macports.org/avahi/avahi-0.6.31.tar.gz"
 )
 
 digests=(
@@ -20,7 +20,7 @@ function extract {
 }
 
 function build {
-	CFLAGS="-L${MUMBLE_PREFIX}/lib -I${MUMBLE_PREFIX}/include" ./configure --prefix=${MUMBLE_PREFIX} --enable-compat-libdns_sd --disable-qt3 --disable-qt4 --disable-gtk --disable-gtk3 --enable-dbus --with-xml=expat --disable-gdbm --disable-dbm --enable-libdaemon --disable-python --disable-python-dbus --disable-mono --disable-monodoc
+	./configure --prefix=${MUMBLE_PREFIX} --enable-compat-libdns_sd --disable-qt3 --disable-qt4 --disable-gtk --disable-gtk3 --enable-dbus --with-xml=expat --disable-gdbm --disable-dbm --enable-libdaemon --disable-python --disable-python-dbus --disable-mono --disable-monodoc --without-systemdsystemunitdir
 	make
 }
 
