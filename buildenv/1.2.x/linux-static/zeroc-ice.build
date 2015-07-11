@@ -5,7 +5,7 @@
 # <http://mumble.info/mumble-releng/LICENSE>.
 
 urls=(
-	"http://www.zeroc.com/download/Ice/3.5/Ice-3.5.1.tar.gz"
+	"http://download.zeroc.com/Ice/3.5/Ice-3.5.1.tar.gz"
 )
 
 digests=(
@@ -20,6 +20,50 @@ function extract {
 
 function prepare {
 	patch -p2 < ${MUMBLE_BUILDENV_ROOT}/patches/Ice-3.5.1-static.patch
+
+	## Do some configure-like testing to fix some build errors with older GCCs
+	TST=`mktemp -p .` || exit 1
+
+	# Test if #pragma GCC diagnostic is unsupported
+	cat > ${TST}.c << EOF
+#pragma GCC diagnostic warning "-Wdeprecated-declarations"
+int main() {}
+EOF
+	if gcc -c -Wunknown-pragmas -Werror ${TST}.c; then
+		:
+	else
+		sed -e '/^\s*CXXFLAGS\s*=/ s/\s-Werror\s/ -Werror -Wno-unknown-pragmas -Wno-deprecated-declarations /' -i config/Make.rules.Linux
+	fi
+
+	# Test if -pthread implies -lrt, needed for clock_gettime
+	cat > ${TST}.c << EOF
+void clock_gettime();
+int main() { clock_gettime(); }
+EOF
+	if gcc -pthread -o ${TST} ${TST}.c; then
+		:
+	else
+		sed -e '/^BASELIBS\s*=/ s/$/ -lrt/' -i config/Make.rules.Linux
+	fi
+
+	# Test if g++ -Wall includes -Wnon-virtual-dtor
+	cat > ${TST}.c << EOF
+int main() {
+ class a
+ {
+ public:
+  ~a();
+  virtual void b();
+ };
+}
+EOF
+	if g++ -c -Wall -Werror ${TST}.c; then
+		:
+	else
+		sed -e '/^\s*CXXFLAGS\s*=/ s/\s-Werror\s/ -Werror -Wno-non-virtual-dtor /' -i config/Make.rules.Linux
+	fi
+
+	rm -f ${TST}.c ${TST}.o ${TST}
 }
 
 function build {
