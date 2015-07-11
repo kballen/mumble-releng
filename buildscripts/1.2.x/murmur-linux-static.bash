@@ -20,7 +20,29 @@ fi
 
 # Fix LFLAGS and LIBS options in generated Makefile
 mv src/murmur/Makefile.Release src/murmur/Makefile.Release.old
-sed -e '/^LFLAGS\s*=/ s/\s-static\s/ /g' -e '/^LFLAGS\s*=/ s/\s-Wl,-rpath,[a-zA-Z0-9_\.\/\:\-]*/ /g' -e '/^LFLAGS\s*=/ s/$/ -static-libstdc++/' -e '/^LIBS\s*=/ s/\s-L[a-zA-Z0-9_\.\/\:\-]*/ /g' -e '/^LIBS\s*=/ s/\s-lavahi-common\s*-lavahi-client\s/ -lavahi-client -lavahi-common /' -e '/^LIBS\s*=/ s/\(-ldl\|-lm\|-lpthread\|-lrt\)\s/ /g' -e '/^LIBS\s*=/ s/\s-l\([a-zA-Z0-9_\.\-]*\)/ $(MUMBLE_PREFIX)\/lib\/lib\1.a/g' -e '/^LIBS\s*=/ s/$/ $(MUMBLE_PREFIX)\/lib\/libbz2.a -ldl/' src/murmur/Makefile.Release.old > src/murmur/Makefile.Release
+sed -e '/^LFLAGS\s*=/ s/\s-static\s/ /g' -e '/^LFLAGS\s*=/ s/\s-Wl,-rpath,[a-zA-Z0-9_~\.\/\:\-]*/ /g' -e '/^LIBS\s*=/ s/\s-L[a-zA-Z0-9_~\.\/\:\-]*/ /g' -e '/^LIBS\s*=/ s/\s-lavahi-common\s*-lavahi-client\s/ -lavahi-client -lavahi-common /' -e '/^LIBS\s*=/ s/\(-ldl\|-lm\|-lpthread\|-lrt\)\s/ /g' -e '/^LIBS\s*=/ s/\s-l\([a-zA-Z0-9_\.\-]*\)/ $(MUMBLE_PREFIX)\/lib\/lib\1.a/g' -e '/^LIBS\s*=/ s/$/ $(MUMBLE_PREFIX)\/lib\/libbz2.a -ldl/' src/murmur/Makefile.Release.old > src/murmur/Makefile.Release
+
+## Do some configure-like testing to fix some build errors with older GCCs
+TST=`mktemp -p .` || exit 1
+# Test if -pthread implies -lrt, needed for clock_gettime
+cat > ${TST}.c << EOF
+void clock_gettime();
+int main() { clock_gettime(); }
+EOF
+if gcc -pthread -o ${TST} ${TST}.c; then
+	:
+else
+	sed -e '/^LIBS\s*=/ s/$/ -lrt/' -i src/murmur/Makefile.Release
+fi
+# Test if -static-libstdc++ is supported
+if g++ -static-libstdc++ 2>&1 | grep 'unrecognized'; then
+	sed -e '/^LINK\s*=/ s/g++/gcc/' -i src/murmur/Makefile.Release
+	sed -e "/^LIBS\s*=/ s|$| $(gcc -print-file-name=libstdc++.a) -lm|" -i src/murmur/Makefile.Release
+else
+	sed -e '/^LFLAGS\s*=/ s/$/ -static-libstdc++/' -i src/murmur/Makefile.Release
+fi
+# End of tests
+rm -f ${TST}.c ${TST}.o ${TST}
 
 make
 
