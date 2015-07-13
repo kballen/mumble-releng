@@ -19,6 +19,10 @@ function extract {
 	cd glib-2.42.2
 }
 
+function prepare {
+	patch -p1 < ${MUMBLE_BUILDENV_ROOT}/patches/glib-configure-march-i486.patch
+}
+
 function build {
 	PYTHON=${MUMBLE_PREFIX}/bin/python ./configure --prefix=${MUMBLE_PREFIX} --enable-static
 	make
